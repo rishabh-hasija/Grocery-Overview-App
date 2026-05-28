@@ -2,6 +2,28 @@
 
 An Android app for scanning grocery bills, extracting purchased products and prices, and summarizing shopping behavior over time.
 
+## Project Structure
+
+```text
+Grocery Overview App/
+├── app/
+│   ├── src/main/
+│   │   ├── java/com/groceryoverview/
+│   │   │   ├── data/
+│   │   │   │   ├── local/          # Room database, DAO, entities, repository
+│   │   │   │   └── ocr/            # Receipt text extraction using ML Kit
+│   │   │   ├── domain/             # Business models and summary logic
+│   │   │   ├── ui/                 # ViewModel, UI state, Compose screens
+│   │   │   ├── AppContainer.kt     # Dependency container
+│   │   │   └── MainActivity.kt     # App entry point
+│   │   └── AndroidManifest.xml
+│   └── build.gradle.kts
+├── build.gradle.kts
+├── gradle.properties
+├── settings.gradle.kts
+├── .gitignore
+└── README.md
+
 ## What the app does
 
 1. Scan a grocery bill using the camera.
