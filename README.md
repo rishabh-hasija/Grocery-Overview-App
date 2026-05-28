@@ -1,4 +1,4 @@
-# Grocery Overview Android App
+# Grocery Overview Android App (v1.0.0)
 
 A simple Android app for scanning grocery receipts, extracting purchased items and prices, storing receipt data locally, and reviewing spending summaries.
 
