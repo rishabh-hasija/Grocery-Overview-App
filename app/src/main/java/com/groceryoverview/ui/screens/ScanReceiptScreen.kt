@@ -6,8 +6,8 @@ import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.weight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -45,7 +45,9 @@ fun ScanReceiptScreen(
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         AndroidView(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .fillMaxSize()
+                .fillMaxHeight(0.7f),
             factory = {
                 PreviewView(it).apply {
                     this.controller = controller

@@ -1,6 +1,8 @@
 package com.groceryoverview.ui
 
 import androidx.camera.core.ImageProxy
+import androidx.camera.core.ExperimentalGetImage
+import kotlin.OptIn
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.groceryoverview.data.ReceiptCaptureProcessor
@@ -58,6 +60,7 @@ class ReceiptViewModel(
         }
     }
 
+    @OptIn(ExperimentalGetImage::class)
     fun processScan(imageProxy: ImageProxy, purchaseDate: LocalDate, storeName: String? = null) {
         viewModelScope.launch {
             _uiState.update { it.copy(isScanning = true, errorMessage = null) }
