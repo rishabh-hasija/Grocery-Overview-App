@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.groceryoverview.domain.PurchaseSummary
 
 @Composable
-fun SummaryScreen(summary: PurchaseSummary?) {
+fun SummaryScreen(summary: PurchaseSummary?, onBack: () -> Unit = {}) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -25,6 +25,12 @@ fun SummaryScreen(summary: PurchaseSummary?) {
         verticalArrangement = Arrangement.Top
     ) {
         Text("Summary", style = MaterialTheme.typography.headlineMedium)
+        androidx.compose.material3.Button(
+            onClick = onBack,
+            modifier = Modifier.padding(top = 8.dp)
+        ) {
+            Text("Back")
+        }
         Spacer(modifier = Modifier.height(12.dp))
         if (summary == null) {
             Text("No receipts available yet.")
