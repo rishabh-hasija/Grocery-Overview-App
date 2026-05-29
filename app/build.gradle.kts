@@ -4,16 +4,47 @@ plugins {
     id("org.jetbrains.kotlin.kapt")
 }
 
+val appVersionCode = 2
+val appVersionName = "1.0.1"
+val updateManifestUrl = "https://github.com/rishabh-hasija/Grocery-Overview-App/releases/latest/download/update.json"
+val releaseApkUrl = "https://github.com/rishabh-hasija/Grocery-Overview-App/releases/latest/download/grocery-overview-release.apk"
+
 android {
     namespace = "com.groceryoverview"
     compileSdk = 34
+
+    val releaseKeystorePath = System.getenv("ANDROID_KEYSTORE_FILE")
+    val releaseKeystorePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
+    val releaseKeyAlias = System.getenv("ANDROID_KEY_ALIAS")
+    val releaseKeyPassword = System.getenv("ANDROID_KEY_PASSWORD")
 
     defaultConfig {
         applicationId = "com.groceryoverview"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = appVersionCode
+        versionName = appVersionName
+        buildConfigField(
+            "String",
+            "UPDATE_MANIFEST_URL",
+            "\"$updateManifestUrl\""
+        )
+    }
+
+    signingConfigs {
+        if (
+            !releaseKeystorePath.isNullOrBlank() &&
+            !releaseKeystorePassword.isNullOrBlank() &&
+            !releaseKeyAlias.isNullOrBlank() &&
+            !releaseKeyPassword.isNullOrBlank()
+        ) {
+            create("release") {
+                storeFile = file(releaseKeystorePath)
+                storePassword = releaseKeystorePassword
+                keyAlias = releaseKeyAlias
+                keyPassword = releaseKeyPassword
+            }
+        }
     }
 
     buildTypes {
@@ -23,6 +54,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfigs.findByName("release")?.let { signingConfig = it }
         }
     }
 
@@ -37,11 +69,36 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.14"
     }
+}
+
+val generateReleaseUpdateManifest = tasks.register("generateReleaseUpdateManifest") {
+    val outputFile = layout.buildDirectory.file("generated/release/update.json")
+    outputs.file(outputFile)
+
+    doLast {
+        val file = outputFile.get().asFile
+        file.parentFile.mkdirs()
+        file.writeText(
+            """
+            {
+              "versionCode": $appVersionCode,
+              "versionName": "$appVersionName",
+              "apkUrl": "$releaseApkUrl",
+              "releaseNotes": "Initial in-app update support"
+            }
+            """.trimIndent()
+        )
+    }
+}
+
+tasks.matching { it.name == "assembleRelease" }.configureEach {
+    dependsOn(generateReleaseUpdateManifest)
 }
 
 dependencies {

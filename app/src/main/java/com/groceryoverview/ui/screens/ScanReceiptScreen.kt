@@ -33,10 +33,7 @@ fun ScanReceiptScreen(
     val controller = remember { LifecycleCameraController(context) }
 
     LaunchedEffect(controller) {
-        controller.setEnabledUseCases(
-            androidx.camera.view.CameraController.PREVIEW,
-            androidx.camera.view.CameraController.IMAGE_CAPTURE
-        )
+        controller.setEnabledUseCases(androidx.camera.view.CameraController.IMAGE_CAPTURE)
         controller.bindToLifecycle(lifecycleOwner)
     }
 
