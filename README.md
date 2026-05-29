@@ -1,4 +1,4 @@
-# Grocery Overview Android App (v1.0.0)
+# Grocery Overview Android App (v1.0.1)
 
 A simple Android app for scanning grocery receipts, extracting purchased items and prices, storing receipt data locally, and reviewing spending summaries.
 
@@ -24,7 +24,8 @@ This repository now includes:
 - **Home Screen**
   - Shows the number of saved receipts.
   - Tap **Scan Receipt** to add a new receipt.
-  - Tap **View Summary** to see spending analysis.
+- Tap **View Summary** to see spending analysis.
+- Tap **Update App** to check a hosted release manifest and install a newer APK directly from the app.
 
 - **Scan Receipt**
   - Captures the receipt with the camera.
@@ -66,6 +67,23 @@ After building the release version, the APK is available at:
 - `app/build/outputs/apk/release/app-release-signed.apk`
 
 Use `app-release-signed.apk` for testing on Android devices.
+
+## App updates
+
+The app now includes an in-app **Update App** button. It reads the manifest from the GitHub Releases URL configured in `app/build.gradle.kts` and then downloads the APK from GitHub Releases.
+
+To publish a new update:
+
+1. Push a tag such as `v1.0.2` or run the `Build and Publish Release` workflow manually.
+2. Add the release signing secrets in GitHub Actions:
+   - `ANDROID_KEYSTORE_BASE64`
+   - `ANDROID_KEYSTORE_PASSWORD`
+   - `ANDROID_KEY_ALIAS`
+   - `ANDROID_KEY_PASSWORD`
+3. Bump the app version in `app/build.gradle.kts`.
+4. The workflow generates `update.json` from the build version and uploads both `grocery-overview-release.apk` and `update.json` to the GitHub Release.
+
+When a newer `versionCode` is found, the app downloads the APK and opens the Android installer for the user to confirm the update.
 
 ## Project structure
 

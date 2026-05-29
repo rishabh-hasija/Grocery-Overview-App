@@ -9,4 +9,4 @@ if not exist "%CLASSPATH%" (
   echo ERROR: Gradle wrapper jar not found. Run 'gradle wrapper' or install Gradle.
   exit /b 1
 )
-java -jar "%CLASSPATH%" %*
+java -classpath "%CLASSPATH%" org.gradle.wrapper.GradleWrapperMain %*

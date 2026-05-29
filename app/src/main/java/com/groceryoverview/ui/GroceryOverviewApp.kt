@@ -6,10 +6,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
+import com.groceryoverview.BuildConfig
 import com.groceryoverview.ui.screens.HomeScreen
 import com.groceryoverview.ui.screens.ScanReceiptScreen
 import com.groceryoverview.ui.screens.SummaryScreen
+import com.groceryoverview.update.AppUpdateManager
+import com.groceryoverview.update.UpdateCheckResult
+import kotlinx.coroutines.launch
 
 @Composable
 fun GroceryOverviewApp(
@@ -17,6 +23,10 @@ fun GroceryOverviewApp(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var screen by remember { mutableStateOf("home") }
+    val context = LocalContext.current
+    val updateManager = remember(context) { AppUpdateManager(context) }
+    val scope = rememberCoroutineScope()
+    var updateMessage by remember { mutableStateOf<String?>(null) }
 
     MaterialTheme {
         when (screen) {
@@ -30,8 +40,31 @@ fun GroceryOverviewApp(
             "summary" -> SummaryScreen(summary = uiState.summary, onBack = { screen = "home" })
             else -> HomeScreen(
                 receiptCount = uiState.receipts.size,
+                appVersion = BuildConfig.VERSION_NAME,
+                updateStatus = updateMessage,
                 onScanClick = { screen = "scan" },
-                onSummaryClick = { screen = "summary" }
+                onSummaryClick = { screen = "summary" },
+                onUpdateClick = {
+                    scope.launch {
+                        updateMessage = "Checking for updates..."
+                        when (val result = updateManager.checkForUpdate()) {
+                            UpdateCheckResult.UpToDate -> {
+                                updateMessage = "You are already on the latest version."
+                            }
+                            is UpdateCheckResult.UpdateAvailable -> {
+                                updateMessage = "Downloading ${result.info.versionName}..."
+                                val installResult = updateManager.downloadAndInstall(result.info)
+                                updateMessage = installResult.fold(
+                                    onSuccess = { "Update installer opened. Finish the install prompt to complete the update." },
+                                    onFailure = { it.message ?: "Unable to start the update installer." }
+                                )
+                            }
+                            is UpdateCheckResult.Unavailable -> {
+                                updateMessage = result.message
+                            }
+                        }
+                    }
+                }
             )
         }
     }

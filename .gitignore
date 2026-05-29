@@ -21,6 +21,7 @@ Thumbs.db
 captures/
 .externalNativeBuild/
 .cxx/
+dist/
 
 # Keystore
 *.jks

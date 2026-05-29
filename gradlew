@@ -12,4 +12,4 @@ if [ ! -f "$CLASSPATH" ]; then
   echo "ERROR: Gradle wrapper jar not found. Run 'gradle wrapper' or install Gradle." >&2
   exit 1
 fi
-exec java -jar "$CLASSPATH" "$@"
+exec java -classpath "$CLASSPATH" org.gradle.wrapper.GradleWrapperMain "$@"
