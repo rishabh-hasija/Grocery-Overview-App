@@ -99,8 +99,8 @@ class AppUpdateManager(
         val urlConnection = URL(apkUrl).openConnection() as HttpURLConnection
 
         return try {
-            urlConnection.connectTimeout = 10_000
-            urlConnection.readTimeout = 20_000
+            urlConnection.connectTimeout = 15_000
+            urlConnection.readTimeout = 60_000
             urlConnection.requestMethod = "GET"
 
             urlConnection.inputStream.use { input ->
