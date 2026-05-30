@@ -35,6 +35,10 @@ fun GroceryOverviewApp(
                     viewModel.processScan(imageProxy, java.time.LocalDate.now())
                     screen = "home"
                 },
+                onCaptureError = { errorMsg ->
+                    viewModel.setErrorMessage(errorMsg)
+                    screen = "home"
+                },
                 onStopScan = { screen = "home" }
             )
             "summary" -> SummaryScreen(summary = uiState.summary, onBack = { screen = "home" })
@@ -42,7 +46,13 @@ fun GroceryOverviewApp(
                 receiptCount = uiState.receipts.size,
                 appVersion = BuildConfig.VERSION_NAME,
                 updateStatus = updateMessage,
-                onScanClick = { screen = "scan" },
+                isScanning = uiState.isScanning,
+                scanText = uiState.scanText,
+                errorMessage = uiState.errorMessage,
+                onScanClick = {
+                    viewModel.clearScanMessage()
+                    screen = "scan"
+                },
                 onSummaryClick = { screen = "summary" },
                 onUpdateClick = {
                     scope.launch {

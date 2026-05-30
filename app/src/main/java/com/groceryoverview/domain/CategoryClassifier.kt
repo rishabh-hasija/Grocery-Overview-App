@@ -2,21 +2,92 @@ package com.groceryoverview.domain
 
 class CategoryClassifier {
     fun classify(productName: String): ItemCategory {
-        val normalized = productName.lowercase()
+        val n = productName.lowercase()
+        fun has(vararg words: String) = words.any { n.contains(it) }
 
         return when {
-            normalized.contains("milk") || normalized.contains("yogurt") || normalized.contains("cheese") || normalized.contains("butter") -> ItemCategory.Dairy
-            normalized.contains("apple") || normalized.contains("banana") || normalized.contains("tomato") || normalized.contains("lettuce") || normalized.contains("spinach") -> ItemCategory.Produce
-            normalized.contains("bread") || normalized.contains("bun") || normalized.contains("cake") -> ItemCategory.Bakery
-            normalized.contains("chicken") || normalized.contains("beef") || normalized.contains("pork") || normalized.contains("fish") -> ItemCategory.Meat
-            normalized.contains("frozen") || normalized.contains("ice cream") -> ItemCategory.Frozen
-            normalized.contains("water") || normalized.contains("juice") || normalized.contains("soda") || normalized.contains("coffee") -> ItemCategory.Beverages
-            normalized.contains("chips") || normalized.contains("cookie") || normalized.contains("crackers") -> ItemCategory.Snacks
-            normalized.contains("soap") || normalized.contains("detergent") || normalized.contains("paper towel") -> ItemCategory.Household
-            normalized.contains("shampoo") || normalized.contains("toothpaste") || normalized.contains("deodorant") -> ItemCategory.PersonalCare
-            normalized.contains("diaper") || normalized.contains("formula") -> ItemCategory.Baby
-            normalized.contains("cat food") || normalized.contains("dog food") -> ItemCategory.Pet
-            normalized.contains("rice") || normalized.contains("pasta") || normalized.contains("sauce") || normalized.contains("cereal") -> ItemCategory.Pantry
+            // Beverages checked before Dairy so "almond milk"/"oat milk" don't hit has("milk")
+            has(
+                "water", "juice", "soda", "coffee", "tea", "lemonade", "sparkling",
+                "kombucha", "energy drink", "sports drink", "gatorade", "powerade",
+                "vitamin water", "almond milk", "oat milk", "soy milk", "smoothie", "cider"
+            ) -> ItemCategory.Beverages
+
+            has(
+                "milk", "yogurt", "cheese", "butter", "cream", "creamer", "cottage",
+                "sour cream", "half and half", "kefir", "whey", "cheddar", "mozzarella",
+                "parmesan", "brie", "gouda", "ricotta", "custard", "dairy"
+            ) -> ItemCategory.Dairy
+
+            has(
+                "apple", "banana", "tomato", "lettuce", "spinach", "carrot", "onion",
+                "potato", "pepper", "cucumber", "broccoli", "celery", "garlic",
+                "mushroom", "avocado", "lemon", "lime", "orange", "grape", "berry",
+                "strawberry", "blueberry", "mango", "kale", "zucchini", "squash",
+                "cabbage", "beet", "radish", "herb", "cilantro", "parsley", "basil",
+                "ginger", "scallion"
+            ) -> ItemCategory.Produce
+
+            has(
+                "bread", "bun", "cake", "muffin", "bagel", "croissant", "roll",
+                "tortilla", "pita", "focaccia", "loaf", "biscuit", "donut", "pastry",
+                "brownie", "waffle", "pancake mix"
+            ) -> ItemCategory.Bakery
+
+            has(
+                "chicken", "beef", "pork", "fish", "turkey", "ham", "bacon", "sausage",
+                "salmon", "shrimp", "lamb", "steak", "ground meat", "tilapia", "tuna",
+                "crab", "lobster", "deli", "pepperoni", "salami", "prosciutto",
+                "brisket", "rib", "wing"
+            ) -> ItemCategory.Meat
+
+            has(
+                "frozen", "ice cream", "popsicle", "gelato", "sorbet", "frozen pizza",
+                "frozen meal", "tv dinner", "edamame frozen", "frozen vegetable",
+                "frozen fruit", "ice"
+            ) -> ItemCategory.Frozen
+
+            has(
+                "chips", "cookie", "crackers", "candy", "chocolate", "pretzel", "popcorn",
+                "granola bar", "trail mix", "gummy", "licorice", "snack", "nuts",
+                "cashew", "almond", "pistachio", "peanut", "sunflower seed", "jerky",
+                "fruit snack"
+            ) -> ItemCategory.Snacks
+
+            has(
+                "soap", "detergent", "paper towel", "toilet paper", "trash bag",
+                "cleaning", "bleach", "sponge", "dish soap", "laundry", "fabric softener",
+                "air freshener", "candle", "aluminum foil", "plastic wrap", "ziploc",
+                "garbage bag", "mop"
+            ) -> ItemCategory.Household
+
+            has(
+                "shampoo", "toothpaste", "deodorant", "conditioner", "lotion",
+                "moisturizer", "sunscreen", "razor", "bandage", "vitamins", "medicine",
+                "ibuprofen", "acetaminophen", "floss", "mouthwash", "cotton", "feminine",
+                "nail polish", "perfume", "cologne"
+            ) -> ItemCategory.PersonalCare
+
+            has(
+                "diaper", "formula", "baby food", "baby wipe", "baby lotion",
+                "pacifier", "baby wash", "baby shampoo", "infant", "toddler",
+                "baby cereal", "baby bottle", "teething"
+            ) -> ItemCategory.Baby
+
+            has(
+                "cat food", "dog food", "pet food", "kitty litter", "cat litter",
+                "dog treat", "cat treat", "pet shampoo", "flea", "aquarium",
+                "bird seed", "hamster", "fish food"
+            ) -> ItemCategory.Pet
+
+            has(
+                "rice", "pasta", "sauce", "cereal", "flour", "sugar", "salt", "pepper",
+                "oil", "vinegar", "broth", "stock", "canned", "beans", "lentils",
+                "chickpea", "oats", "quinoa", "couscous", "breadcrumb", "baking soda",
+                "baking powder", "yeast", "honey", "syrup", "jam", "peanut butter",
+                "mayonnaise", "ketchup", "mustard", "soy sauce", "hot sauce"
+            ) -> ItemCategory.Pantry
+
             else -> ItemCategory.Unknown
         }
     }

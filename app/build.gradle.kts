@@ -4,8 +4,8 @@ plugins {
     id("org.jetbrains.kotlin.kapt")
 }
 
-val appVersionCode = 2
-val appVersionName = "1.0.1"
+val appVersionCode = 3
+val appVersionName = "1.0.2"
 val updateManifestUrl = "https://github.com/rishabh-hasija/Grocery-Overview-App/releases/latest/download/update.json"
 val releaseApkUrl = "https://github.com/rishabh-hasija/Grocery-Overview-App/releases/latest/download/grocery-overview-release.apk"
 

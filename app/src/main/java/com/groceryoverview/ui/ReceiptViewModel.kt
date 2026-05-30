@@ -60,6 +60,14 @@ class ReceiptViewModel(
         }
     }
 
+    fun clearScanMessage() {
+        _uiState.update { it.copy(scanText = "", errorMessage = null) }
+    }
+
+    fun setErrorMessage(message: String) {
+        _uiState.update { it.copy(errorMessage = message) }
+    }
+
     @OptIn(ExperimentalGetImage::class)
     fun processScan(imageProxy: ImageProxy, purchaseDate: LocalDate, storeName: String? = null) {
         viewModelScope.launch {

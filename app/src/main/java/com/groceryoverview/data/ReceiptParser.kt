@@ -49,6 +49,6 @@ class ReceiptParser(
     }
 
     companion object {
-        private val PRICE_REGEX = Regex("""(\d+[,.]\d{2})\s*$""")
+        private val PRICE_REGEX = Regex("""(\d+[,.]\d{1,2})\s*[A-Za-z]?\s*$""")
     }
 }
