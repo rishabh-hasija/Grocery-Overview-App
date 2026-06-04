@@ -33,8 +33,21 @@ class ReceiptParser(
         val trimmed = line.trim()
         if (trimmed.isBlank()) return null
 
-        val priceMatch = PRICE_REGEX.find(trimmed) ?: return null
+        // Find the last valid price on the line — take rightmost to avoid
+        // matching quantities or percentages embedded in the product name.
+        val priceMatch = PRICE_REGEX.findAll(trimmed)
+            .filter { match ->
+                // Reject if immediately followed by another digit or separator —
+                // that means it's part of a larger number (e.g. date "05.06.2026").
+                val next = trimmed.getOrNull(match.range.last + 1)
+                next == null || (!next.isDigit() && next != '.' && next != ',')
+            }
+            .lastOrNull() ?: return null
+
         val price = priceMatch.groupValues[1].replace(",", ".").toDoubleOrNull() ?: return null
+        // Sanity-check: grocery prices are between 0.01 and 9999.99
+        if (price <= 0.0 || price > 9999.0) return null
+
         val name = trimmed.substring(0, priceMatch.range.first).trim()
         if (name.length < 2) return null
         if (isNoiseName(name)) return null
@@ -50,11 +63,11 @@ class ReceiptParser(
     }
 
     companion object {
-        // Handles EN/DE decimal separators (1.99 / 1,99), optional trailing
-        // tax-indicator letter (F, A, B), currency symbol (€), or unit (EUR).
-        private val PRICE_REGEX = Regex("""(\d+[,.]\d{1,2})\s*[€A-Za-z]*\s*$""")
+        // No end anchor — matches a price-like number (up to 5 integer digits,
+        // comma or period separator, 1–2 decimal digits) anywhere on the line.
+        private val PRICE_REGEX = Regex("""(\d{1,5}[,.]\d{1,2})""")
 
-        // Receipt structural lines that should never be treated as products.
+        // Names that are structural receipt lines, not products.
         private val NOISE_NAMES = setOf(
             // English
             "total", "subtotal", "tax", "change", "cash", "paid", "payment",
