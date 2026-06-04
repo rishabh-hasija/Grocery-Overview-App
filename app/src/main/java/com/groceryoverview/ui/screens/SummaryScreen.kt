@@ -40,6 +40,7 @@ import com.groceryoverview.domain.PurchaseSummary
 @Composable
 fun SummaryScreen(
     summary: PurchaseSummary?,
+    receiptCount: Int,
     onBack: () -> Unit,
     onClearAll: () -> Unit
 ) {
@@ -82,6 +83,10 @@ fun SummaryScreen(
         }
     ) { innerPadding ->
         if (summary == null || summary.itemTotals.isEmpty()) {
+            val message = if (receiptCount == 0)
+                "No receipts scanned yet."
+            else
+                "No items could be read from your receipts.\nTry scanning again with better lighting and make sure prices are visible."
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -90,10 +95,7 @@ fun SummaryScreen(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = "No receipts scanned yet.",
-                    style = MaterialTheme.typography.bodyLarge
-                )
+                Text(text = message, style = MaterialTheme.typography.bodyLarge)
             }
             return@Scaffold
         }

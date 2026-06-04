@@ -78,6 +78,9 @@ class ReceiptViewModel(
             _uiState.update { it.copy(isScanning = true, errorMessage = null) }
             runCatching {
                 val receipt = processor.process(imageProxy, purchaseDate, storeName)
+                if (receipt.items.isEmpty()) {
+                    error("No items found. Ensure the receipt is well-lit and prices are clearly visible, then try again.")
+                }
                 repository.save(receipt)
             }.onSuccess {
                 _uiState.update { it.copy(isScanning = false, scanText = "Receipt saved locally.") }
