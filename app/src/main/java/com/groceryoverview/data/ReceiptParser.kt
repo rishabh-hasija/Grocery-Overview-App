@@ -33,6 +33,9 @@ class ReceiptParser(
         val trimmed = line.trim()
         if (trimmed.isBlank()) return null
 
+        val normalized = trimmed.lowercase()
+        if (NON_ITEM_KEYWORDS.any { normalized.contains(it) }) return null
+
         val priceMatch = PRICE_REGEX.find(trimmed) ?: return null
         val price = priceMatch.groupValues[1].replace(",", ".").toDoubleOrNull() ?: return null
         val name = trimmed.substring(0, priceMatch.range.first).trim()
@@ -50,5 +53,14 @@ class ReceiptParser(
 
     companion object {
         private val PRICE_REGEX = Regex("""(\d+[,.]\d{2})\s*$""")
+        private val NON_ITEM_KEYWORDS = listOf(
+            "total", "subtotal", "sub-total", "sub total",
+            "tax", "vat", "gst", "hst", "pst",
+            "discount", "savings", "coupon", "promo",
+            "cash", "change", "balance due", "amount due", "amount paid",
+            "tip", "gratuity",
+            "visa", "mastercard", "credit", "debit", "payment",
+            "thank you", "receipt no", "transaction"
+        )
     }
 }

@@ -20,7 +20,7 @@ class SummaryAggregator {
             .map { (key, items) ->
                 val first = items.first()
                 ItemTotal(
-                    name = key,
+                    name = first.name.trim(),
                     quantity = items.sumOf { it.quantity },
                     totalSpent = items.sumOf { it.totalPrice ?: ((it.unitPrice ?: 0.0) * it.quantity) },
                     category = first.category
