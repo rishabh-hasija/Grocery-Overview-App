@@ -37,6 +37,7 @@ class ReceiptParser(
         val price = priceMatch.groupValues[1].replace(",", ".").toDoubleOrNull() ?: return null
         val name = trimmed.substring(0, priceMatch.range.first).trim()
         if (name.length < 2) return null
+        if (isNoiseName(name)) return null
 
         return ReceiptItem(
             receiptId = receiptId,
@@ -49,6 +50,25 @@ class ReceiptParser(
     }
 
     companion object {
-        private val PRICE_REGEX = Regex("""(\d+[,.]\d{1,2})\s*[A-Za-z]?\s*$""")
+        // Handles EN/DE decimal separators (1.99 / 1,99), optional trailing
+        // tax-indicator letter (F, A, B), currency symbol (€), or unit (EUR).
+        private val PRICE_REGEX = Regex("""(\d+[,.]\d{1,2})\s*[€A-Za-z]*\s*$""")
+
+        // Receipt structural lines that should never be treated as products.
+        private val NOISE_NAMES = setOf(
+            // English
+            "total", "subtotal", "tax", "change", "cash", "paid", "payment",
+            "discount", "card", "visa", "mastercard", "debit", "credit",
+            "balance", "receipt", "sale", "savings", "refund",
+            // German
+            "summe", "gesamtsumme", "gesamtbetrag", "gesamt", "zwischensumme",
+            "mwst", "mehrwertsteuer", "ust", "steuer",
+            "rückgeld", "wechselgeld", "gegeben", "betrag", "rabatt",
+            "bon", "kasse", "barzahlung", "kartenzahlung", "ec-karte",
+            "danke", "tschüss", "auf wiedersehen"
+        )
+
+        private fun isNoiseName(name: String): Boolean =
+            NOISE_NAMES.contains(name.lowercase().trim())
     }
 }
