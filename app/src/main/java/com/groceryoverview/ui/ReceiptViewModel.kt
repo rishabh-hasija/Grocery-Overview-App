@@ -60,6 +60,10 @@ class ReceiptViewModel(
         }
     }
 
+    fun clearAll() {
+        viewModelScope.launch { repository.clearAll() }
+    }
+
     fun clearScanMessage() {
         _uiState.update { it.copy(scanText = "", errorMessage = null) }
     }

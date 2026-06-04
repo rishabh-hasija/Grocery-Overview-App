@@ -33,6 +33,10 @@ class ReceiptLocalRepository(
         )
     }
 
+    suspend fun clearAll() {
+        receiptDao.deleteAll()
+    }
+
     suspend fun getReceiptById(receiptId: String): Receipt? {
         val receipt = receiptDao.getReceiptById(receiptId) ?: return null
         val items = receiptDao.getItemsForReceipt(receiptId).map { it.toDomain() }

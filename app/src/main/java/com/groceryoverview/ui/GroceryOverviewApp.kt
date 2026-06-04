@@ -41,7 +41,11 @@ fun GroceryOverviewApp(
                 },
                 onStopScan = { screen = "home" }
             )
-            "summary" -> SummaryScreen(summary = uiState.summary, onBack = { screen = "home" })
+            "summary" -> SummaryScreen(
+                summary = uiState.summary,
+                onBack = { screen = "home" },
+                onClearAll = { viewModel.clearAll() }
+            )
             else -> HomeScreen(
                 receiptCount = uiState.receipts.size,
                 appVersion = BuildConfig.VERSION_NAME,
