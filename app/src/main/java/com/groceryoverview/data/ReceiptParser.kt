@@ -70,9 +70,14 @@ class ReceiptParser(
         // Names that are structural receipt lines, not products.
         private val NOISE_NAMES = setOf(
             // English
-            "total", "subtotal", "tax", "change", "cash", "paid", "payment",
-            "discount", "card", "visa", "mastercard", "debit", "credit",
-            "balance", "receipt", "sale", "savings", "refund",
+            "total", "subtotal", "sub-total", "sub total",
+            "tax", "vat", "gst", "hst", "pst",
+            "change", "cash", "paid", "payment",
+            "discount", "savings", "coupon", "promo", "refund",
+            "card", "visa", "mastercard", "debit", "credit",
+            "balance", "balance due", "amount due", "amount paid",
+            "receipt", "sale", "tip", "gratuity",
+            "thank you", "receipt no", "transaction",
             // German
             "summe", "gesamtsumme", "gesamtbetrag", "gesamt", "zwischensumme",
             "mwst", "mehrwertsteuer", "ust", "steuer",
