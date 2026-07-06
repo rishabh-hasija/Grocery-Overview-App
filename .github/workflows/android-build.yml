@@ -25,10 +25,21 @@ jobs:
           source "$HOME/.sdkman/bin/sdkman-init.sh"
           sdk install gradle 8.6
 
-      - name: Create Gradle wrapper and build debug APK
-        run: |
-          gradle wrapper
-          ./gradlew assembleDebug --no-daemon
+      - name: Create Gradle wrapper
+        run: gradle wrapper
+
+      - name: Run unit tests
+        run: ./gradlew testDebugUnitTest --no-daemon
+
+      - name: Build debug APK
+        run: ./gradlew assembleDebug --no-daemon
+
+      - name: Upload unit test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-report
+          path: app/build/reports/tests/testDebugUnitTest
 
       - name: Upload debug APK
         uses: actions/upload-artifact@v4

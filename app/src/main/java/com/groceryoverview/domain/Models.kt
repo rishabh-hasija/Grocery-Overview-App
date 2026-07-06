@@ -17,6 +17,8 @@ data class ReceiptItem(
     val receiptId: String,
     val name: String,
     val quantity: Double = 1.0,
+    /** "Stk" for piece-counted items, "kg" for weight-priced items. */
+    val unit: String = "Stk",
     val unitPrice: Double? = null,
     val totalPrice: Double? = null,
     val category: ItemCategory = ItemCategory.Unknown
@@ -35,6 +37,8 @@ enum class ItemCategory {
     PersonalCare,
     Baby,
     Pet,
+    Deposit,
+    Discount,
     Unknown
 }
 
@@ -49,6 +53,7 @@ data class PurchaseSummary(
 data class ItemTotal(
     val name: String,
     val quantity: Double,
+    val unit: String,
     val totalSpent: Double,
     val category: ItemCategory
 )
@@ -56,5 +61,6 @@ data class ItemTotal(
 data class CategoryTotal(
     val category: ItemCategory,
     val itemCount: Int,
+    val totalQuantity: Double,
     val totalSpent: Double
 )

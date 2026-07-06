@@ -1,6 +1,14 @@
-# Grocery Overview Android App (v1.0.1)
+# Grocery Overview Android App (v1.1.0)
 
 A simple Android app for scanning grocery receipts, extracting purchased items and prices, storing receipt data locally, and reviewing spending summaries.
+
+## What's new in v1.1.0
+
+- **German store receipt parsing**: dedicated support for receipt formats from REWE, EDEKA, Lidl, ALDI (Süd/Nord), Kaufland, Netto, PENNY, dm, Rossmann and independent stores (including Indian grocery stores). Handles quantity lines ("2 x 1,19"), weight-priced items ("0,754 kg x 1,63 EUR/kg"), Pfand (deposits), discounts (including trailing-minus notation), VAT class markers, and both "1,99" and "1.99" decimal formats.
+- **Automatic store, date and total detection** from the scanned receipt text.
+- **Analytics screen with time filters**: Week, Month, 3 Months, 6 Months, Year, plus a Custom date range picker (up to one year). Shows total spend in €, spend and quantity per item, and category breakdown with item counts.
+- **Expanded categories**: Deposit and Discount categories, plus Indian/international product keywords (atta, dal, paneer, masala, ghee, naan, and many more).
+- **Unit tests**: parser tests with realistic receipt samples per store, plus classifier, aggregator and date-filter tests. CI runs them on every push.
 
 ## Updated repository contents
 

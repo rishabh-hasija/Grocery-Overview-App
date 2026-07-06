@@ -21,6 +21,7 @@ fun ReceiptItem.toEntity(): ReceiptItemEntity {
         receiptId = receiptId,
         name = name,
         quantity = quantity,
+        unit = unit,
         unitPrice = unitPrice,
         totalPrice = totalPrice,
         category = category.name
@@ -44,6 +45,7 @@ fun ReceiptItemEntity.toDomain(): ReceiptItem {
         receiptId = receiptId,
         name = name,
         quantity = quantity,
+        unit = unit,
         unitPrice = unitPrice,
         totalPrice = totalPrice,
         category = runCatching { ItemCategory.valueOf(category) }.getOrDefault(ItemCategory.Unknown)

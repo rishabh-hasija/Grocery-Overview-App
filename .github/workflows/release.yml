@@ -38,6 +38,9 @@ jobs:
           mkdir -p .github-release
           echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > .github-release/release-keystore.jks
 
+      - name: Run unit tests
+        run: ./gradlew testReleaseUnitTest --no-daemon
+
       - name: Build release APK
         env:
           ANDROID_KEYSTORE_FILE: ${{ github.workspace }}/.github-release/release-keystore.jks

@@ -3,7 +3,11 @@ package com.groceryoverview.domain
 class CategoryClassifier {
     fun classify(productName: String): ItemCategory {
         val n = productName.lowercase()
+        // Token string for word-boundary matching of short, ambiguous keywords
+        // (e.g. "eis" must not match "reis", "ham" must not match "shampoo").
+        val tokens = " " + n.replace(Regex("[^a-z0-9äöüß]"), " ") + " "
         fun has(vararg words: String) = words.any { n.contains(it) }
+        fun hasWord(vararg words: String) = words.any { tokens.contains(" $it ") }
 
         return when {
             // ── Beverages (checked before Dairy to avoid "almond milk" / "mandelmilch" hitting Dairy) ──
@@ -17,8 +21,11 @@ class CategoryClassifier {
                 "kaffee", "tee", "cola", "bier", "wein", "sekt", "kakao",
                 "milchshake", "shake", "nektar", "eistee", "energydrink",
                 "mandelmilch", "hafermilch", "sojamilch", "reismilch",
-                "fruchtsaft", "gemüsesaft", "smoothie"
-            ) -> ItemCategory.Beverages
+                "fruchtsaft", "gemüsesaft", "smoothie",
+                // Indian / international
+                "chai", "masala tea", "thums up", "limca", "frooti",
+                "maaza", "nimbu", "rooh afza", "falooda"
+            ) || hasWord("lassi") -> ItemCategory.Beverages
 
             // ── Dairy ──
             has(
@@ -31,8 +38,11 @@ class CategoryClassifier {
                 "quark", "schmand", "frischkäse", "frischkase", "schmelzkäse",
                 "schmelzkase", "emmental", "emmentaler", "camembert", "limburger",
                 "hüttenkäse", "hüttenkase", "molke", "buttermilch", "dickmilch",
-                "crème fraîche", "creme fraiche", "mascarpone"
-            ) -> ItemCategory.Dairy
+                "crème fraîche", "creme fraiche", "mascarpone",
+                "eier", "egg",
+                // Indian / international
+                "paneer", "dahi", "khoya", "malai", "shrikhand"
+            ) || hasWord("ei") -> ItemCategory.Dairy
 
             // ── Produce ──
             has(
@@ -54,7 +64,12 @@ class CategoryClassifier {
                 "zucchini", "kürbis", "rübe", "radieschen", "lauch", "porree",
                 "fenchel", "artischocke", "spargel", "mais", "erbse", "bohne",
                 "petersilie", "basilikum", "schnittlauch", "dill", "thymian",
-                "rosmarin", "ingwer", "obst", "gemüse", "gemuese", "frucht"
+                "rosmarin", "ingwer", "obst", "gemüse", "gemuese", "frucht",
+                // Indian / international
+                "okra", "bhindi", "brinjal", "aubergine", "eggplant", "karela",
+                "curry leaves", "curryblätter", "koriander", "drumstick",
+                "bottle gourd", "lauki", "doodhi", "tinda", "arbi", "taro",
+                "green chilli", "grüne chili"
             ) -> ItemCategory.Produce
 
             // ── Bakery ──
@@ -69,29 +84,32 @@ class CategoryClassifier {
                 "kuchen", "torte", "muffin", "brezel", "laugenbrezel",
                 "croissant", "hörnchen", "waffel", "pfannkuchen", "berliner",
                 "donut", "gebäck", "gebaeck", "backware", "laib", "stollen",
-                "streuselkuchen", "käsekuchen", "kasekuchen"
+                "streuselkuchen", "käsekuchen", "kasekuchen", "ciabatta",
+                // Indian / international
+                "naan", "roti", "chapati", "paratha", "puri", "kulcha", "pav",
+                "bhatura"
             ) -> ItemCategory.Bakery
 
             // ── Meat ──
             has(
                 // English
-                "chicken", "beef", "pork", "fish", "turkey", "ham", "bacon", "sausage",
+                "chicken", "beef", "pork", "fish", "turkey", "bacon", "sausage",
                 "salmon", "shrimp", "lamb", "steak", "ground meat", "tilapia", "tuna",
-                "crab", "lobster", "deli", "pepperoni", "salami", "prosciutto",
-                "brisket", "rib", "wing",
+                "crab", "lobster", "pepperoni", "salami", "prosciutto",
+                "brisket", "wing",
                 // German
                 "hähnchen", "hahnchen", "hühnchen", "huhn", "hühn",
                 "rind", "rindfleisch", "rinderhack", "hackfleisch",
                 "schwein", "schweinefleisch", "schweinefilet", "schweinekotelett",
                 "fisch", "lachs", "forelle", "hering", "kabeljau", "thunfisch",
                 "garnele", "krabbe", "tintenfisch",
-                "pute", "truthahn", "ente", "gans",
+                "pute", "truthahn", "gans",
                 "schinken", "speck", "wurst", "bratwurst", "weißwurst", "leberwurst",
                 "salami", "aufschnitt", "fleischwurst", "wiener", "frankfurter",
                 "lamm", "lammfleisch", "kalbfleisch", "kalb",
                 "steak", "schnitzel", "kotelett", "filet", "braten", "gulasch",
                 "fischstäbchen", "fischstaebchen"
-            ) -> ItemCategory.Meat
+            ) || hasWord("ham", "ente", "deli", "rib", "ribs") -> ItemCategory.Meat
 
             // ── Frozen ──
             has(
@@ -99,10 +117,11 @@ class CategoryClassifier {
                 "frozen", "ice cream", "popsicle", "gelato", "sorbet",
                 // German
                 "tiefkühl", "tiefkuhl", "tk-", "gefroren", "eingefroren",
-                "eis", "eiscreme", "speiseeis", "softeis", "wassereis",
+                "eiscreme", "speiseeis", "softeis", "wassereis",
+                "vanilleeis", "schokoeis", "milcheis", "fruchteis", "eiskonfekt",
                 "tiefkühlpizza", "tiefkühlgemüse", "tiefkühlobst",
                 "tiefkühlkost", "gefriergut"
-            ) -> ItemCategory.Frozen
+            ) || hasWord("eis") -> ItemCategory.Frozen
 
             // ── Snacks ──
             has(
@@ -118,7 +137,12 @@ class CategoryClassifier {
                 "muslieriegel", "riegel", "nuss", "nüsse", "nuesse",
                 "erdnuss", "cashew", "mandel", "pistazie", "walnuss",
                 "sonnenblumenkern", "kürbiskern", "kurbiskern",
-                "snack", "knabber", "salzstange"
+                "snack", "knabber", "salzstange",
+                // Indian / international
+                "namkeen", "bhujia", "sev ", "samosa", "pakora", "murukku",
+                "mathri", "papdi", "chakli", "banana chips", "bhel", "chivda",
+                "khakhra", "soan papdi", "ladoo", "laddu", "barfi", "burfi",
+                "gulab jamun", "jalebi", "halwa"
             ) -> ItemCategory.Snacks
 
             // ── Household ──
@@ -216,7 +240,18 @@ class CategoryClassifier {
                 "konfiture", "gelee", "aufstrich",
                 "erdnussbutter", "nussnougatcreme", "nutella",
                 "mayonnaise", "mayo", "ketchup", "senf", "mostrich",
-                "sojasoße", "sojasosse", "worcester", "tabasco"
+                "sojasoße", "sojasosse", "worcester", "tabasco",
+                // Indian / international staples
+                "atta", "maida", "besan", "sooji", "suji", "rava", "poha",
+                "basmati", "dal", "daal", "toor", "moong", "mung", "chana",
+                "urad", "masoor", "rajma", "chole", "ghee", "masala",
+                "turmeric", "haldi", "jeera", "cumin", "dhania", "cardamom",
+                "elaichi", "clove", "laung", "zimt", "saffron", "safran",
+                "hing", "asafoetida", "methi", "fenugreek", "chutney", "achar",
+                "pickle", "papad", "papadum", "tamarind", "imli", "jaggery",
+                "coconut milk", "kokosmilch", "kokosnussmilch", "tofu",
+                "curry paste", "currypaste", "kichererbsenmehl", "sambar",
+                "rasam", "idli", "dosa", "vermicelli", "seviyan", "kheer mix"
             ) -> ItemCategory.Pantry
 
             else -> ItemCategory.Unknown

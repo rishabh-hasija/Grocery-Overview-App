@@ -18,6 +18,7 @@ data class ReceiptItemEntity(
     val receiptId: String,
     val name: String,
     val quantity: Double,
+    val unit: String = "Stk",
     val unitPrice: Double?,
     val totalPrice: Double?,
     val category: String

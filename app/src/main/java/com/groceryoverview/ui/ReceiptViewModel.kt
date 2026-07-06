@@ -9,6 +9,7 @@ import com.groceryoverview.data.ReceiptCaptureProcessor
 import com.groceryoverview.data.ReceiptParser
 import com.groceryoverview.data.local.ReceiptLocalRepository
 import com.groceryoverview.data.ocr.MlKitReceiptTextExtractor
+import com.groceryoverview.domain.AnalyticsPeriod
 import com.groceryoverview.domain.SummaryAggregator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -46,19 +47,42 @@ class ReceiptViewModel(
         }
     }
 
-    fun updateDateRange(fromDate: LocalDate, toDate: LocalDate) {
+    /** Selects a quick period filter (Week / Month / 3M / 6M / Year). */
+    fun selectPeriod(period: AnalyticsPeriod) {
+        val range = period.range() ?: return
         _uiState.update { current ->
             current.copy(
-                selectedFromDate = fromDate,
-                selectedToDate = toDate,
+                selectedPeriod = period,
+                selectedFromDate = range.first,
+                selectedToDate = range.second,
                 summary = summaryAggregator.summarize(
                     receipts = current.receipts,
-                    fromDate = fromDate,
-                    toDate = toDate
+                    fromDate = range.first,
+                    toDate = range.second
                 )
             )
         }
     }
+
+    /** Sets a custom date range, clamped to at most one year. */
+    fun setCustomRange(fromDate: LocalDate, toDate: LocalDate) {
+        val (from, to) = AnalyticsPeriod.clampCustomRange(fromDate, toDate)
+        _uiState.update { current ->
+            current.copy(
+                selectedPeriod = AnalyticsPeriod.CUSTOM,
+                selectedFromDate = from,
+                selectedToDate = to,
+                summary = summaryAggregator.summarize(
+                    receipts = current.receipts,
+                    fromDate = from,
+                    toDate = to
+                )
+            )
+        }
+    }
+
+    @Deprecated("Use selectPeriod/setCustomRange", ReplaceWith("setCustomRange(fromDate, toDate)"))
+    fun updateDateRange(fromDate: LocalDate, toDate: LocalDate) = setCustomRange(fromDate, toDate)
 
     fun clearAll() {
         viewModelScope.launch { repository.clearAll() }

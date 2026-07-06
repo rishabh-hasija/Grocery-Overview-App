@@ -4,8 +4,8 @@ plugins {
     id("org.jetbrains.kotlin.kapt")
 }
 
-val appVersionCode = 3
-val appVersionName = "1.0.2"
+val appVersionCode = 4
+val appVersionName = "1.1.0"
 val updateManifestUrl = "https://github.com/rishabh-hasija/Grocery-Overview-App/releases/latest/download/update.json"
 val releaseApkUrl = "https://github.com/rishabh-hasija/Grocery-Overview-App/releases/latest/download/grocery-overview-release.apk"
 
@@ -122,4 +122,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1")
     kapt("androidx.room:room-compiler:2.6.1")
     debugImplementation("androidx.compose.ui:ui-tooling")
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.9.24")
 }

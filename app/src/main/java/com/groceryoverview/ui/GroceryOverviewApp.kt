@@ -44,6 +44,11 @@ fun GroceryOverviewApp(
             "summary" -> SummaryScreen(
                 summary = uiState.summary,
                 receiptCount = uiState.receipts.size,
+                selectedPeriod = uiState.selectedPeriod,
+                fromDate = uiState.selectedFromDate,
+                toDate = uiState.selectedToDate,
+                onPeriodSelect = { viewModel.selectPeriod(it) },
+                onCustomRange = { from, to -> viewModel.setCustomRange(from, to) },
                 onBack = { screen = "home" },
                 onClearAll = { viewModel.clearAll() }
             )

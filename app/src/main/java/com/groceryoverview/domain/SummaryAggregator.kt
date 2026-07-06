@@ -3,6 +3,7 @@ package com.groceryoverview.domain
 import java.time.LocalDate
 
 class SummaryAggregator {
+
     fun summarize(
         receipts: List<Receipt>,
         fromDate: LocalDate,
@@ -13,16 +14,17 @@ class SummaryAggregator {
         }
 
         val allItems = filteredReceipts.flatMap { it.items }
-        val totalSpent = allItems.sumOf { it.totalPrice ?: ((it.unitPrice ?: 0.0) * it.quantity) }
+        val totalSpent = allItems.sumOf { it.spend() }
 
         val itemTotals = allItems
-            .groupBy { it.name.trim().lowercase() }
-            .map { (key, items) ->
+            .groupBy { it.name.trim().lowercase() to it.unit }
+            .map { (_, items) ->
                 val first = items.first()
                 ItemTotal(
                     name = first.name.trim(),
                     quantity = items.sumOf { it.quantity },
-                    totalSpent = items.sumOf { it.totalPrice ?: ((it.unitPrice ?: 0.0) * it.quantity) },
+                    unit = first.unit,
+                    totalSpent = items.sumOf { it.spend() },
                     category = first.category
                 )
             }
@@ -34,7 +36,8 @@ class SummaryAggregator {
                 CategoryTotal(
                     category = category,
                     itemCount = items.size,
-                    totalSpent = items.sumOf { it.totalPrice ?: ((it.unitPrice ?: 0.0) * it.quantity) }
+                    totalQuantity = items.sumOf { it.quantity },
+                    totalSpent = items.sumOf { it.spend() }
                 )
             }
             .sortedByDescending { it.totalSpent }
@@ -47,4 +50,7 @@ class SummaryAggregator {
             categoryTotals = categoryTotals
         )
     }
+
+    private fun ReceiptItem.spend(): Double =
+        totalPrice ?: ((unitPrice ?: 0.0) * quantity)
 }

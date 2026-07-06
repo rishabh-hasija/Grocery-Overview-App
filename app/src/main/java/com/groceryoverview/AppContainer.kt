@@ -16,7 +16,9 @@ class AppContainer(context: Context) {
         context.applicationContext,
         AppDatabase::class.java,
         "grocery-overview.db"
-    ).build()
+    )
+        .addMigrations(AppDatabase.MIGRATION_1_2)
+        .build()
 
     private val receiptRepository = ReceiptLocalRepository(database.receiptDao())
 
